@@ -10,7 +10,10 @@ export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      return await this.userRepository.create(createUserDto);
+      const result = await this.userRepository.save(createUserDto);
+      console.log('ini result = ', result);
+
+      return result;
     } catch (e) {
       throw new Error(e);
     }

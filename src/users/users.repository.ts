@@ -14,7 +14,9 @@ export class UsersRepository
   implements UserRepositoryInterface
 {
   protected readonly logger: Logger;
-  constructor(@InjectRepository(User) userRepository: Repository<User>) {
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {
     super(userRepository);
   }
 }

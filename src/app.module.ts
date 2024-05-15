@@ -3,9 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from '@app/common/database';
+import { PostModule } from './post/post.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [AuthModule, DatabaseModule],
+  imports: [AuthModule, DatabaseModule, PostModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

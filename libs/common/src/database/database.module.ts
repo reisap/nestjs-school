@@ -1,7 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '../config/config.module';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     //   host: 'db',
     //   port: 3306,
     //   username: 'root',
-    //   password: 'root',
+    //   password: 'secret',
     //   database: 'socialmedia',
     //   autoLoadEntities: true,
     //   synchronize: true,
@@ -30,11 +31,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        console.log(configService.get('MYSQL_URI'));
         return {
           type: 'mysql',
-          url: configService.get('MYSQL_URI'),
-          synchronize: true,
+          host: 'db',
+          port: 3306,
+          username: 'root',
+          password: 'secret',
+          database: 'socialmedia',
           autoLoadEntities: true,
+          synchronize: true,
         };
       },
       inject: [ConfigService],

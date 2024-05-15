@@ -1,19 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity()
 export class AbstractModel {
-  @PrimaryGeneratedColumn()
-  id: bigint;
+  @Column({
+    type: Date,
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  create_date;
 
   @Column({
     type: Date,
-    default: () => Date.now(),
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
   })
-  create_at: Date;
-
-  @Column({
-    type: Date,
-    default: () => Date.now(),
-  })
-  update_at: Date;
+  update_at;
 }

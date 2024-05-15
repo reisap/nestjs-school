@@ -1,4 +1,5 @@
 import { AbstractModel } from '@app/common/database';
+import { Exclude } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'user' })
@@ -9,21 +10,22 @@ export class User extends AbstractModel {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
-  @Column()
+  @Column({ default: true })
   inactive: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   activationToken: string;
 
-  @Column()
+  @Column({ nullable: true })
   passwordResetToken: string;
 
-  @Column()
+  @Column({ nullable: true })
   image: string;
 }
