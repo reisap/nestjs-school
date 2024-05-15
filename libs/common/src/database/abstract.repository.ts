@@ -8,7 +8,7 @@ import {
   Repository,
 } from 'typeorm';
 
-interface BaseInterfaceRepository<TEntity> {
+export interface BaseInterfaceRepository<TEntity> {
   create(data: DeepPartial<TEntity>): Promise<TEntity>;
   createMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]>;
   save(data: DeepPartial<TEntity>): Promise<TEntity>;

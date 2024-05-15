@@ -5,8 +5,8 @@ import { DatabaseModule } from './database/database.module';
 import { LoggerModule } from './logger/logger.module';
 
 @Module({
-    providers: [CommonService],
-    exports: [CommonService],
-    imports: [ConfigModule, DatabaseModule, LoggerModule],
+  providers: [CommonService],
+  exports: [CommonService],
+  imports: [ConfigModule, DatabaseModule, LoggerModule],
 })
 export class CommonModule {}
