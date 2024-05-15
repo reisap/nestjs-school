@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { AbstractModel } from './abstract.model';
 import {
   DeepPartial,
+  DeleteResult,
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
@@ -20,6 +21,8 @@ export interface BaseInterfaceRepository<TEntity> {
   findWithRelations(relations: FindManyOptions<TEntity>): Promise<TEntity[]>;
   preload(entityLike: DeepPartial<TEntity>): Promise<TEntity>;
   findOne(options: FindOneOptions<TEntity>): Promise<TEntity>;
+  delete(id: number): Promise<DeleteResult>;
+  update(id: any, data: object | DeepPartial<TEntity> | any): Promise<TEntity>;
 }
 
 export abstract class AbstractRepository<TEntity extends AbstractModel>
@@ -43,6 +46,14 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
 
   //find
   async findAll(options?: FindManyOptions<TEntity>): Promise<TEntity[]> {
+    /**
+     * Offset (paginated) where from entities should be taken.
+     */
+    //skip?: number;
+    /**
+     * Limit (paginated) - max number of entities should be taken.
+     */
+    //take?: number;
     return await this.entity.find(options);
   }
   public async findOneById(id: any): Promise<TEntity> {
@@ -70,8 +81,33 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   public async remove(data: TEntity): Promise<TEntity> {
     return await this.entity.remove(data);
   }
+  public async delete(id: number): Promise<DeleteResult> {
+    try {
+      return await this.entity.delete(id);
+    } catch (e) {
+      return null;
+    }
+  }
+  //end delete
 
   //update
+  public async update(
+    id: any,
+    data: object | DeepPartial<TEntity> | any,
+  ): Promise<TEntity> {
+    try {
+      const tbl = await this.findOne(id);
+      if (tbl === null) {
+        return null;
+      }
+      await this.entity.update(id, data);
+      const result = await this.entity.save(data);
+
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
   public async save(data: DeepPartial<TEntity>): Promise<TEntity> {
     return await this.entity.save(data);
   }
@@ -79,4 +115,5 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   public async saveMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
     return this.entity.save(data);
   }
+  //end update
 }
