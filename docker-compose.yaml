@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     command: pnpm run start:dev
-    port:
+    ports:
       - ${PORT}:${PORT}
     volumes:
       - '.:/app'
@@ -23,4 +23,4 @@ services:
       - ${DB_PORT}:${DB_PORT}
 
 volumes:
-  - v_socialnestdb:
+  v_socialnestdb:
