@@ -6,37 +6,62 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import ResponseDto from '@app/common/dto/response.dto';
 
 @Controller('v1/post')
+@UseGuards(AuthGuard)
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postService.create(createPostDto);
+  async create(@Body() createPostDto: CreatePostDto) {
+    const result = await this.postService.create(createPostDto);
+
+    return new ResponseDto({
+      data: result,
+    }).response();
   }
 
   @Get()
-  findAll() {
-    return this.postService.findAll();
+  async findAll(@Query() query) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const result = await this.postService.findAll(page, limit);
+
+    return new ResponseDto({
+      data: result,
+    }).response();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const paramsId = parseInt(id);
+    const result = await this.postService.findOne(paramsId);
+    return new ResponseDto({
+      data: result,
+    }).response();
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+    const paramsId = parseInt(id);
+    const result = await this.postService.update(paramsId, updatePostDto);
+    return new ResponseDto({
+      data: result,
+    }).response();
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.postService.remove(+id);
   }
 }
