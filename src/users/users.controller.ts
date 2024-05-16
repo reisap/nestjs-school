@@ -25,9 +25,7 @@ export class UsersController {
 
     return new ResponseDto({
       data: result,
-      message: 'Success',
-      code: 200,
-    });
+    }).response();
   }
 
   @Get()
@@ -38,9 +36,7 @@ export class UsersController {
 
     return new ResponseDto({
       data: result,
-      message: 'Success',
-      code: 200,
-    });
+    }).response();
   }
 
   @Get(':id')
@@ -49,9 +45,7 @@ export class UsersController {
     const result = await this.usersService.findOne(paramsId);
     return new ResponseDto({
       data: result,
-      message: 'Success',
-      code: 200,
-    });
+    }).response();
   }
 
   @Patch(':id')
@@ -60,9 +54,7 @@ export class UsersController {
     const result = this.usersService.update(paramsId, updateUserDto);
     return new ResponseDto({
       data: result,
-      message: 'Success',
-      code: 200,
-    });
+    }).response();
   }
 
   @Delete(':id')
@@ -71,8 +63,6 @@ export class UsersController {
     const result = this.usersService.remove(paramsId);
     return new ResponseDto({
       data: result,
-      message: 'Success',
-      code: 200,
-    });
+    }).response();
   }
 }

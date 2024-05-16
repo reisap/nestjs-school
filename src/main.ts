@@ -15,7 +15,7 @@ async function bootstrap() {
   app.use(helmet());
   app.enableCors();
   app.useLogger(app.get(Logger));
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter()); //digunakan ketika ada error execption yang terjadi,sehingga lebih mudah divalidasi dan di proses
   const configService = app.get(ConfigService);
   await app.listen(configService.get('PORT'));
 }

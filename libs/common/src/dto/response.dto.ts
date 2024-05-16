@@ -3,9 +3,9 @@ export default class ResponseDto {
   message: string;
   code: number;
   timestamp: string;
-  constructor({ data, message, code }) {
-    this.code = code;
-    this.message = message;
+  constructor({ data }) {
+    this.code = 200;
+    this.message = 'Success';
     this.data = data;
     this.timestamp = new Date().toISOString();
   }
