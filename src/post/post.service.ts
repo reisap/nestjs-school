@@ -8,7 +8,6 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostRepository } from './post.repository';
 import { Post } from './entities/post.entity';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class PostService {
@@ -34,7 +33,7 @@ export class PostService {
       return await this.postRepository.findAll(options);
     } catch (e) {
       this.logger.error('error findAll');
-      throw new ExceptionsHandler(e);
+      throw new BadRequestException(e);
     }
   }
 
