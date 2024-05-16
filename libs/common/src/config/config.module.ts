@@ -8,6 +8,7 @@ import {
 @Module({
   imports: [
     NestConfigModule.forRoot({
+      isGlobal: true,
       validationSchema: Joi.object({
         MYSQL_URI: Joi.string().required(),
         MYSQL_USER: Joi.string().required(),
@@ -15,6 +16,8 @@ import {
         MYSQL_DATABASE: Joi.string().required(),
         DB_PORT: Joi.number().required(),
         DB_HOST: Joi.string().required(),
+        JWT_EXPIRATION: Joi.number().required(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
   ],

@@ -37,7 +37,4 @@ export class User extends AbstractModel {
 
   @Column({ nullable: true })
   image: string;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }

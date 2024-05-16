@@ -1,6 +1,6 @@
 export default class ResponseDto {
-  data: object;
-  message: string;
+  data?: object | string;
+  message?: string;
   code: number;
   timestamp: string;
   constructor({ data }) {

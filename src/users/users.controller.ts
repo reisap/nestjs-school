@@ -7,8 +7,9 @@ import {
   Param,
   Delete,
   Query,
-  UseFilters,
+  UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,6 +18,7 @@ import ResponseDto from '@app/common/dto/response.dto';
 import { Logger } from 'nestjs-pino';
 
 @Controller('v1/users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   protected readonly logger: Logger;
   constructor(private readonly usersService: UsersService) {}

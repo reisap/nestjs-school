@@ -1,6 +1,9 @@
-import { Column } from 'typeorm';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class AbstractModel {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({
     type: Date,
     nullable: true,

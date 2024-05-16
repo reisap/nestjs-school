@@ -28,6 +28,7 @@ export interface BaseInterfaceRepository<TEntity> {
   findOne(options: FindOneOptions<TEntity>): Promise<TEntity>;
   delete(id: number): Promise<DeleteResult | any>;
   update(id: any, data: object | DeepPartial<TEntity> | any): Promise<TEntity>;
+  findOneParams(object: object): Promise<TEntity>;
 }
 
 export abstract class AbstractRepository<TEntity extends AbstractModel>
@@ -96,6 +97,14 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
       throw new NotFoundException(e);
     }
   }
+  async findOneParams(object: object): Promise<TEntity> {
+    try {
+      return await this.entity.findOne({ where: object });
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
+  }
+
   public async findByCondition(
     filterCondition: FindOneOptions<TEntity>,
   ): Promise<TEntity> {

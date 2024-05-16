@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   Logger,
+  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -11,11 +12,26 @@ import { User } from './entities/user.entity';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import * as bcrypt from 'bcryptjs';
 import { randomString } from '@app/common';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
   protected readonly logger: Logger;
   constructor(private readonly userRepository: UsersRepository) {}
+
+  async login(loginUser: LoginUserDto) {
+    const user = await this.userRepository.findOneParams({
+      email: loginUser.email,
+    });
+    if (!user) {
+      throw new NotFoundException('email not found');
+    }
+    const match = await bcrypt.compare(loginUser.password, user.password);
+    if (!match) {
+      throw new BadRequestException('password not match');
+    }
+    return user;
+  }
   async create(createUserDto: CreateUserDto): Promise<User | any> {
     try {
       const result = await this.userRepository.save({
