@@ -13,8 +13,8 @@ export class User extends AbstractModel {
   @Column({ unique: true })
   email: string;
 
-  @Column()
   @Exclude()
+  @Column()
   password: string;
 
   @Column({ default: true })
@@ -28,4 +28,9 @@ export class User extends AbstractModel {
 
   @Column({ nullable: true })
   image: string;
+
+  constructor(partial: Partial<User>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

@@ -10,7 +10,12 @@ import { HttpExceptionFilter } from '@app/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      disableErrorMessages: false,
+    }),
+  );
   app.use(cookieParser());
   app.use(helmet());
   app.enableCors();

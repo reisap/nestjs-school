@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -11,8 +16,13 @@ export class UsersService {
   protected readonly logger: Logger;
   constructor(private readonly userRepository: UsersRepository) {}
   async create(createUserDto: CreateUserDto): Promise<User | any> {
-    const result = await this.userRepository.save(createUserDto);
-    return result;
+    try {
+      const result = await this.userRepository.save(createUserDto);
+      return result;
+    } catch (e) {
+      this.logger.error('error create');
+      throw new UnprocessableEntityException(e);
+    }
   }
 
   async findAll(page: number, limit: number): Promise<User[]> {
