@@ -2,4 +2,6 @@ start:
 	docker-compose up
 stop:
 	docker-compose down
-.PHONY: start stop
+rmi:
+	docker image rmi nestjs-socialmedia
+.PHONY: start stop rmi

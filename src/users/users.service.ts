@@ -8,8 +8,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { User } from './entities/user.entity';
-import { DeleteResult } from 'typeorm';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import * as bcrypt from 'bcryptjs';
+import { randomString } from '@app/common';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,11 @@ export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
   async create(createUserDto: CreateUserDto): Promise<User | any> {
     try {
-      const result = await this.userRepository.save(createUserDto);
+      const result = await this.userRepository.save({
+        ...createUserDto,
+        password: await bcrypt.hash(createUserDto.password, 12),
+        activationToken: randomString(16),
+      });
       return result;
     } catch (e) {
       throw new UnprocessableEntityException(e);
@@ -55,7 +60,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: number): Promise<DeleteResult> {
+  async remove(id: number) {
     try {
       const result = await this.userRepository.delete(id);
       return result;

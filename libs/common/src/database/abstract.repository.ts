@@ -26,7 +26,7 @@ export interface BaseInterfaceRepository<TEntity> {
   findWithRelations(relations: FindManyOptions<TEntity>): Promise<TEntity[]>;
   preload(entityLike: DeepPartial<TEntity>): Promise<TEntity>;
   findOne(options: FindOneOptions<TEntity>): Promise<TEntity>;
-  delete(id: number): Promise<DeleteResult>;
+  delete(id: number): Promise<DeleteResult | any>;
   update(id: any, data: object | DeepPartial<TEntity> | any): Promise<TEntity>;
 }
 
@@ -124,12 +124,13 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
       throw new NotFoundException(e);
     }
   }
-  public async delete(id: number): Promise<DeleteResult> {
+  public async delete(id: number): Promise<DeleteResult | any> {
     try {
       const result = await this.entity.delete(id);
-      if (!result || typeof result === undefined || typeof result === null) {
+      if (result.affected == 0) {
         throw new NotFoundException('id not found');
       }
+
       return result;
     } catch (e) {
       throw new NotFoundException(e);

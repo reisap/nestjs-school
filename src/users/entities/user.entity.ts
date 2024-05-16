@@ -1,11 +1,20 @@
 import { AbstractModel } from '@app/common/database';
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'user' })
 export class User extends AbstractModel {
+  constructor(partial: Partial<User>) {
+    super();
+    Object.assign(this, partial);
+  }
   @PrimaryGeneratedColumn()
-  id: bigint;
+  id: number;
 
   @Column()
   username: string;
@@ -29,8 +38,6 @@ export class User extends AbstractModel {
   @Column({ nullable: true })
   image: string;
 
-  constructor(partial: Partial<User>) {
-    super();
-    Object.assign(this, partial);
-  }
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

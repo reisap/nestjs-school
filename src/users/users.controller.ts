@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   Query,
-  UseInterceptors,
+  UseFilters,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -53,7 +53,7 @@ export class UsersController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const paramsId = parseInt(id);
-    const result = this.usersService.update(paramsId, updateUserDto);
+    const result = await this.usersService.update(paramsId, updateUserDto);
     return new ResponseDto({
       data: result,
     }).response();
@@ -62,7 +62,7 @@ export class UsersController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const paramsId = parseInt(id);
-    const result = this.usersService.remove(paramsId);
+    const result = await this.usersService.remove(paramsId);
     return new ResponseDto({
       data: result,
     }).response();

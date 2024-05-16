@@ -1,10 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column } from 'typeorm';
 
-@Entity()
-export class AbstractModel {
-  @PrimaryGeneratedColumn()
-  id: bigint;
-
+export abstract class AbstractModel {
   @Column({
     type: Date,
     nullable: true,
