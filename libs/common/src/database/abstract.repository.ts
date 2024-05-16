@@ -158,9 +158,12 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   }
   public async save(data: DeepPartial<TEntity>): Promise<TEntity> {
     try {
+      console.log('ini hasil save === ', data);
       const result = await this.entity.save(data);
+
       return result;
     } catch (e) {
+      console.log('masuk error save == ', e);
       throw new UnprocessableEntityException(e);
     }
   }

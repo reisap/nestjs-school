@@ -20,7 +20,6 @@ export class UsersService {
       const result = await this.userRepository.save(createUserDto);
       return result;
     } catch (e) {
-      this.logger.error('error create');
       throw new UnprocessableEntityException(e);
     }
   }

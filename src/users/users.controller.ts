@@ -21,7 +21,6 @@ export class UsersController {
   protected readonly logger: Logger;
   constructor(private readonly usersService: UsersService) {}
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const result = await this.usersService.create(createUserDto);

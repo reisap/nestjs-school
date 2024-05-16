@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
@@ -22,12 +26,13 @@ export class CreateUserPostMiddleware implements NestMiddleware {
     } catch (e) {
       let error = JSON.parse(e);
       error = {
-        success: false,
-        code: 500,
-        message: 'Error',
-        error: error,
+        code: 422,
+        error: true,
+        message: error,
+        timestamp: new Date().toISOString(),
+        path: req.url,
       };
-      res.status(500).json(error);
+      res.status(422).json(error);
     }
   }
 }

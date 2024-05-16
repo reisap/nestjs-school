@@ -18,12 +18,13 @@ export class CreatePostMiddleware implements NestMiddleware {
     } catch (e) {
       let error = JSON.parse(e);
       error = {
-        success: false,
-        code: 500,
-        message: 'Error',
-        error: error,
+        code: 422,
+        error: true,
+        message: error,
+        timestamp: new Date().toISOString(),
+        path: req.url,
       };
-      res.status(500).json(error);
+      res.status(422).json(error);
     }
   }
 }
