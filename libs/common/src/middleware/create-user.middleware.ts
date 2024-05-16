@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NestMiddleware,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
@@ -33,6 +29,7 @@ export class CreateUserPostMiddleware implements NestMiddleware {
         path: req.url,
       };
       res.status(422).json(error);
+      //throw new UnprocessableEntityException(e);
     }
   }
 }

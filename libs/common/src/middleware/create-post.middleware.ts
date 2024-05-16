@@ -25,6 +25,8 @@ export class CreatePostMiddleware implements NestMiddleware {
         path: req.url,
       };
       res.status(422).json(error);
+
+      //throw new UnprocessableEntityException(e);
     }
   }
 }
