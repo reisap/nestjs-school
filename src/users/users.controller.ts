@@ -12,9 +12,11 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import ResponseDto from '@app/common/dto/response.dto';
+import { Logger } from 'nestjs-pino';
 
 @Controller('v1/users')
 export class UsersController {
+  protected readonly logger: Logger;
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
