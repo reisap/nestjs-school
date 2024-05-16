@@ -16,7 +16,6 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import ResponseDto from '@app/common/dto/response.dto';
-import { Response, Request } from 'express';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
