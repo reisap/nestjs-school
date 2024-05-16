@@ -1,4 +1,9 @@
-import { Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { AbstractModel } from './abstract.model';
 import {
   DeepPartial,
@@ -37,10 +42,18 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
 
   //create
   public async create(data: DeepPartial<TEntity>): Promise<TEntity> {
-    return await this.entity.create(data);
+    try {
+      return await this.entity.create(data);
+    } catch (e) {
+      throw new UnprocessableEntityException(e);
+    }
   }
   public async createMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
-    return await this.entity.create(data);
+    try {
+      return await this.entity.create(data);
+    } catch (e) {
+      throw new UnprocessableEntityException(e);
+    }
   }
   //end create
 
@@ -54,38 +67,63 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
      * Limit (paginated) - max number of entities should be taken.
      */
     //take?: number;
-    return await this.entity.find(options);
+
+    try {
+      return await this.entity.find(options);
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
   }
   public async findOneById(id: any): Promise<TEntity> {
-    const options: FindOptionsWhere<TEntity> = {
-      id: id,
-    };
-    return await this.entity.findOneBy(options);
+    try {
+      const options: FindOptionsWhere<TEntity> = {
+        id: id,
+      };
+      return await this.entity.findOneBy(options);
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   public async findOne(options: FindOneOptions<TEntity>): Promise<TEntity> {
-    return this.entity.findOne(options);
+    try {
+      return this.entity.findOne(options);
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   public async findByCondition(
     filterCondition: FindOneOptions<TEntity>,
   ): Promise<TEntity> {
-    return await this.entity.findOne(filterCondition);
+    try {
+      return await this.entity.findOne(filterCondition);
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   public async findWithRelations(
     relations: FindManyOptions<TEntity>,
   ): Promise<TEntity[]> {
-    return await this.entity.find(relations);
+    try {
+      return await this.entity.find(relations);
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   //end find
 
   //delete
   public async remove(data: TEntity): Promise<TEntity> {
-    return await this.entity.remove(data);
+    try {
+      return await this.entity.remove(data);
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   public async delete(id: number): Promise<DeleteResult> {
     try {
       return await this.entity.delete(id);
     } catch (e) {
-      return null;
+      throw new NotFoundException(e);
     }
   }
   //end delete
@@ -105,15 +143,25 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
 
       return result;
     } catch (e) {
-      return null;
+      throw new UnprocessableEntityException(e);
     }
   }
   public async save(data: DeepPartial<TEntity>): Promise<TEntity> {
-    return await this.entity.save(data);
+    try {
+      const result = await this.entity.save(data);
+      return result;
+    } catch (e) {
+      throw new UnprocessableEntityException(e);
+    }
   }
 
   public async saveMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
-    return this.entity.save(data);
+    try {
+      const result = await this.entity.save(data);
+      return result;
+    } catch (e) {
+      throw new UnprocessableEntityException(e);
+    }
   }
   //end update
 }

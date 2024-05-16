@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -8,15 +14,11 @@ import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class UsersService {
+  protected readonly logger: Logger;
   constructor(private readonly userRepository: UsersRepository) {}
   async create(createUserDto: CreateUserDto): Promise<User | any> {
-    try {
-      const result = await this.userRepository.save(createUserDto);
-
-      return result;
-    } catch (e) {
-      throw new ExceptionsHandler(e);
-    }
+    const result = await this.userRepository.save(createUserDto);
+    return result;
   }
 
   async findAll(page: number, limit: number): Promise<User[]> {
@@ -27,6 +29,7 @@ export class UsersService {
       };
       return await this.userRepository.findAll(options);
     } catch (e) {
+      this.logger.error('error findAll');
       throw new ExceptionsHandler(e);
     }
   }
@@ -35,11 +38,11 @@ export class UsersService {
     try {
       const result = await this.userRepository.findOneById(id);
       if (!result || typeof result === undefined || typeof result === null) {
-        throw new Error('id not found');
+        throw new NotFoundException('User not found');
       }
       return result;
     } catch (e) {
-      throw new ExceptionsHandler(e);
+      throw new BadRequestException(e);
     }
   }
 
@@ -47,11 +50,11 @@ export class UsersService {
     try {
       const result = await this.userRepository.update(id, updateUserDto);
       if (!result || typeof result === undefined || typeof result === null) {
-        throw new Error('id not found');
+        throw new NotFoundException('User not found');
       }
       return result;
     } catch (e) {
-      throw new ExceptionsHandler(e);
+      throw new BadRequestException(e);
     }
   }
 
@@ -59,11 +62,11 @@ export class UsersService {
     try {
       const result = await this.userRepository.delete(id);
       if (!result || typeof result === undefined || typeof result === null) {
-        throw new Error('id not found');
+        throw new NotFoundException('User not found');
       }
       return result;
     } catch (e) {
-      throw new ExceptionsHandler(e);
+      throw new BadRequestException(e);
     }
   }
 }

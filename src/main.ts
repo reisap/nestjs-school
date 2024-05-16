@@ -5,6 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
+import { HttpExceptionFilter } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,7 @@ async function bootstrap() {
   app.use(helmet());
   app.enableCors();
   app.useLogger(app.get(Logger));
+  app.useGlobalFilters(new HttpExceptionFilter());
   const configService = app.get(ConfigService);
   await app.listen(configService.get('PORT'));
 }

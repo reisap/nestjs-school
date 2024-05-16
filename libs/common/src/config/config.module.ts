@@ -10,6 +10,11 @@ import {
     NestConfigModule.forRoot({
       validationSchema: Joi.object({
         MYSQL_URI: Joi.string().required(),
+        MYSQL_USER: Joi.string().required(),
+        MYSQL_ROOT_PASSWORD: Joi.string().required(),
+        MYSQL_DATABASE: Joi.string().required(),
+        DB_PORT: Joi.number().required(),
+        DB_HOST: Joi.string().required(),
       }),
     }),
   ],

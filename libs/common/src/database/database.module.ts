@@ -31,14 +31,13 @@ import { ConfigService } from '@nestjs/config';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        console.log(configService.get('MYSQL_URI'));
         return {
           type: 'mysql',
-          host: 'db',
-          port: 3306,
-          username: 'root',
-          password: 'secret',
-          database: 'socialmedia',
+          host: configService.get('DB_HOST'),
+          port: configService.get('DB_PORT'),
+          username: configService.get('MYSQL_USER'),
+          password: configService.get('MYSQL_ROOT_PASSWORD'),
+          database: configService.get('MYSQL_DATABASE'),
           autoLoadEntities: true,
           synchronize: true,
         };
