@@ -9,12 +9,14 @@ import {
   UseGuards,
   Query,
   Put,
+  Req,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import ResponseDto from '@app/common/dto/response.dto';
+import { Response, Request } from 'express';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
@@ -31,7 +33,8 @@ export class PostController {
   }
 
   @Get()
-  async findAll(@Query() query) {
+  async findAll(@Query() query, @Req() req: any) {
+    console.log('ini user id dari token == ', req.userId);
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
     const result = await this.postService.findAll(page, limit);

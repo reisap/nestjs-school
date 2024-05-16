@@ -15,8 +15,8 @@ export class AuthService {
   async user(request: Request) {
     const cookie = request.cookies['jwt'];
 
-    const { id } = await this.jwtService.verifyAsync(cookie);
+    const { userId } = await this.jwtService.verifyAsync(cookie);
 
-    return this.userService.findOne(id);
+    return this.userService.findOne(userId);
   }
 }
