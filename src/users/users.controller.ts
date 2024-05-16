@@ -46,6 +46,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   async findOne(@Param('id') id: string) {
     const paramsId = parseInt(id);
     const result = await this.usersService.findOne(paramsId);
@@ -55,6 +56,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const paramsId = parseInt(id);
     const result = await this.usersService.update(paramsId, updateUserDto);
@@ -64,6 +66,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async remove(@Param('id') id: string) {
     const paramsId = parseInt(id);
     const result = await this.usersService.remove(paramsId);
