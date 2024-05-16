@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
 @Injectable()
-export class CreateUserMiddleware implements NestMiddleware {
+export class CreateUserPostMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     try {
       const params = req.body;
