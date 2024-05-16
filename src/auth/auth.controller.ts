@@ -29,9 +29,9 @@ export class AuthController {
   ) {
     const result = await this.usersService.login(loginUser);
     //inactive user / user belum verifikasi email
-    if (result.inactive === true) {
-      throw new PreconditionFailedException('Please verify your email !');
-    }
+    // if (result.inactive === true) {
+    //   throw new PreconditionFailedException('Please verify your email !');
+    // }
 
     const expires = new Date();
     expires.setSeconds(

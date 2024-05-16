@@ -16,6 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import ResponseDto from '@app/common/dto/response.dto';
 import { Logger } from 'nestjs-pino';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('v1/users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -33,6 +34,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   async findAll(@Query() query) {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;

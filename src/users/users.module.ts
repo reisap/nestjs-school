@@ -10,9 +10,10 @@ import { DatabaseModule } from '@app/common/database';
 import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
 import { CreateUserPostMiddleware } from '@app/common';
+import { CommonModule } from '@app/common/common.module';
 
 @Module({
-  imports: [DatabaseModule.forFeature([User])],
+  imports: [DatabaseModule.forFeature([User]), CommonModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersService],

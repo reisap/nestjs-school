@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common';
 import { CommonService } from './common.service';
 import { ConfigModule } from './config/config.module';
 import { LoggerModule } from './logger/logger.module';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  providers: [CommonService],
-  exports: [CommonService],
   imports: [
     ConfigModule,
     LoggerModule,
@@ -21,5 +19,7 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
   ],
+  providers: [CommonService, JwtService],
+  exports: [CommonService, JwtModule],
 })
 export class CommonModule {}
