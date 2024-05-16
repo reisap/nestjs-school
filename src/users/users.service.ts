@@ -4,18 +4,18 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { User } from './entities/user.entity';
 import { DeleteResult } from 'typeorm';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User | any> {
     try {
       const result = await this.userRepository.save(createUserDto);
-      console.log('ini result = ', result);
 
       return result;
     } catch (e) {
-      throw new Error(e);
+      throw new ExceptionsHandler(e);
     }
   }
 
@@ -27,7 +27,7 @@ export class UsersService {
       };
       return await this.userRepository.findAll(options);
     } catch (e) {
-      throw new Error(e);
+      throw new ExceptionsHandler(e);
     }
   }
 
@@ -39,7 +39,7 @@ export class UsersService {
       }
       return result;
     } catch (e) {
-      throw new Error(e);
+      throw new ExceptionsHandler(e);
     }
   }
 
@@ -51,7 +51,7 @@ export class UsersService {
       }
       return result;
     } catch (e) {
-      throw new Error(e);
+      throw new ExceptionsHandler(e);
     }
   }
 
@@ -63,7 +63,7 @@ export class UsersService {
       }
       return result;
     } catch (e) {
-      throw new Error(e);
+      throw new ExceptionsHandler(e);
     }
   }
 }

@@ -11,38 +11,66 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import ResponseDto from '@app/common/dto/response.dto';
 
-@Controller('users')
+@Controller('v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const result = await this.usersService.create(createUserDto);
+
+    return new ResponseDto({
+      data: result,
+      message: 'Success',
+      code: 200,
+    });
   }
 
   @Get()
-  findAll(@Query() query) {
+  async findAll(@Query() query) {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
-    return this.usersService.findAll(page, limit);
+    const result = await this.usersService.findAll(page, limit);
+
+    return new ResponseDto({
+      data: result,
+      message: 'Success',
+      code: 200,
+    });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     const paramsId = parseInt(id);
-    return this.usersService.findOne(paramsId);
+    const result = await this.usersService.findOne(paramsId);
+    return new ResponseDto({
+      data: result,
+      message: 'Success',
+      code: 200,
+    });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const paramsId = parseInt(id);
-    return this.usersService.update(paramsId, updateUserDto);
+    const result = this.usersService.update(paramsId, updateUserDto);
+    return new ResponseDto({
+      data: result,
+      message: 'Success',
+      code: 200,
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     const paramsId = parseInt(id);
-    return this.usersService.remove(paramsId);
+    const result = this.usersService.remove(paramsId);
+    return new ResponseDto({
+      data: result,
+      message: 'Success',
+      code: 200,
+    });
   }
 }
