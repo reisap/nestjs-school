@@ -37,9 +37,6 @@ export class UsersService {
   async findOne(id: number): Promise<User> {
     try {
       const result = await this.userRepository.findOneById(id);
-      if (!result || typeof result === undefined || typeof result === null) {
-        throw new NotFoundException('User not found');
-      }
       return result;
     } catch (e) {
       throw new BadRequestException(e);
@@ -49,9 +46,6 @@ export class UsersService {
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     try {
       const result = await this.userRepository.update(id, updateUserDto);
-      if (!result || typeof result === undefined || typeof result === null) {
-        throw new NotFoundException('User not found');
-      }
       return result;
     } catch (e) {
       throw new BadRequestException(e);

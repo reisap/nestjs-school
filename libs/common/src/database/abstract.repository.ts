@@ -79,7 +79,12 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
       const options: FindOptionsWhere<TEntity> = {
         id: id,
       };
-      return await this.entity.findOneBy(options);
+      const result = await this.entity.findOneBy(options);
+      if (!result || typeof result === undefined || typeof result === null) {
+        throw new NotFoundException('id not found');
+      }
+
+      return result;
     } catch (e) {
       throw new NotFoundException(e);
     }
@@ -121,7 +126,11 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   }
   public async delete(id: number): Promise<DeleteResult> {
     try {
-      return await this.entity.delete(id);
+      const result = await this.entity.delete(id);
+      if (!result || typeof result === undefined || typeof result === null) {
+        throw new NotFoundException('id not found');
+      }
+      return result;
     } catch (e) {
       throw new NotFoundException(e);
     }
@@ -135,9 +144,10 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   ): Promise<TEntity> {
     try {
       const tbl = await this.findOne(id);
-      if (tbl === null) {
-        return null;
+      if (!tbl || typeof tbl === undefined || typeof tbl === null) {
+        throw new NotFoundException('id not found');
       }
+
       await this.entity.update(id, data);
       const result = await this.entity.save(data);
 
