@@ -16,10 +16,10 @@ export class checkCachePostById implements NestMiddleware {
 
       if (result != null) {
         result = JSON.parse(result);
-        result.info = 'data from cache';
 
         const format = new ResponseDto({
           data: result,
+          message: 'data from cache',
         }).response();
         return res.send(format);
       }
@@ -43,10 +43,12 @@ export class checkCachePost implements NestMiddleware {
       if (result != null) {
         console.log('redis post all = ', result);
         result = JSON.parse(result);
-        result.info = 'data from cache';
+
         const format = new ResponseDto({
           data: result,
+          message: 'data from cache',
         }).response();
+
         return res.send(format);
       }
       next();

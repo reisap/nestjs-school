@@ -68,7 +68,7 @@ export class PostController {
       .run()
       .client.setEx(
         `post-${query.page}-${query.limit}`,
-        60,
+        10,
         JSON.stringify(result),
       );
 
@@ -85,7 +85,7 @@ export class PostController {
     //redis cache
     this.redisClient
       .run()
-      .client.setEx(`post-${paramsId}`, 60, JSON.stringify(result));
+      .client.setEx(`post-${paramsId}`, 30, JSON.stringify(result));
 
     return new ResponseDto({
       data: result,
