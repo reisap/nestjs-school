@@ -20,3 +20,11 @@
     providers: [UsersService],
   })
 ```
+
+## Default features
+
+1.  Api version
+2.  email sender
+3.  realtime data with socket io
+4.  jwt token auth
+5.  Docker

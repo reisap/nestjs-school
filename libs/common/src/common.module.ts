@@ -4,11 +4,13 @@ import { ConfigModule } from './config/config.module';
 import { LoggerModule } from './logger/logger.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { DatabaseModule } from './database';
 
 @Module({
   imports: [
     ConfigModule,
     LoggerModule,
+    DatabaseModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
