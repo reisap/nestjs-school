@@ -1,11 +1,6 @@
 import { AbstractModel } from '@app/common/database';
 import { Exclude } from 'class-transformer';
-import {
-  Column,
-  DeleteDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'user' })
 export class User extends AbstractModel {

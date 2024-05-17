@@ -1,7 +1,7 @@
 import { AbstractModel } from '@app/common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('post')
+@Entity({ name: 'post' })
 export class Post extends AbstractModel {
   @PrimaryGeneratedColumn()
   id: number;
