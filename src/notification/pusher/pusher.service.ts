@@ -6,7 +6,7 @@ export class PusherService {
   appId: string;
   key: string;
   secret: string;
-  cluster: string | object;
+  cluster: string;
   useTLS: boolean;
   pusher: any;
   constructor() {
