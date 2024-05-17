@@ -1,7 +1,7 @@
 # Series Lanjutan Dari Refreshing Toktok
 
 Jika ingin melihat versi awal dari aplikasi ini sebelum menggunakan nest js bisa dilihat pada repository ini :
-https://github.com/reisap/express-boilerplate
+https://github.com/reisap/express-boilerplate-
 
 Pada repository branch sebelumnya bisa terlihat penggunaan node js es6, kemudian menggunakan typescript
 
