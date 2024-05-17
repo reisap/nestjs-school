@@ -20,7 +20,7 @@ import ResponseDto from '@app/common/dto/response.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { typePusher } from '@app/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
@@ -52,6 +52,8 @@ export class PostController {
     }).response();
   }
 
+  @CacheKey('post_findall')
+  @CacheTTL(20)
   @Get()
   async findAll(@Query() query, @Req() req: any) {
     console.log('ini user id dari token == ', req.userId);
