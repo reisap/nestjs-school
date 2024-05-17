@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '@nestjs/config';
+import RedisClient from './redis';
 
 @Module({
   imports: [
@@ -45,6 +46,8 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
   ],
+  providers: [RedisClient],
+  exports: [RedisClient],
 })
 export class DatabaseModule {
   static forFeature(entity: EntityClassOrSchema[]): DynamicModule {

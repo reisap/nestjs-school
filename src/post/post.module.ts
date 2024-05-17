@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { PostService } from './post.service';
 import { PostController } from './post.controller';
 import { PostRepository } from './post.repository';
@@ -9,6 +9,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { NotificationModule } from 'src/notification/notification.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import RedisClient from '@app/common/database/redis';
+import {
+  checkCachePost,
+  checkCachePostById,
+} from '@app/common/middleware/cache-post.redis';
 
 @Module({
   imports: [
@@ -20,6 +25,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
   providers: [
     PostRepository,
     PostService,
+    RedisClient,
     AuthGuard,
     {
       provide: APP_INTERCEPTOR,
@@ -28,4 +34,13 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
   ],
   exports: [PostService],
 })
-export class PostModule {}
+export class PostModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(checkCachePostById)
+      .forRoutes({ path: 'v1/post/:id', method: RequestMethod.GET });
+    consumer
+      .apply(checkCachePost)
+      .forRoutes({ path: 'v1/post', method: RequestMethod.GET });
+  }
+}

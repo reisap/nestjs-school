@@ -21,6 +21,7 @@ import { NotificationService } from 'src/notification/notification.service';
 import { typePusher } from '@app/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import RedisClient from '@app/common/database/redis';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
@@ -30,6 +31,7 @@ export class PostController {
     private readonly postService: PostService,
     private readonly notificationService: NotificationService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly redisClient: RedisClient,
   ) {}
 
   @Post()
@@ -52,14 +54,23 @@ export class PostController {
     }).response();
   }
 
-  @CacheKey('post_findall')
-  @CacheTTL(20)
+  // @CacheKey('post_findall')
+  // @CacheTTL(20)
   @Get()
   async findAll(@Query() query, @Req() req: any) {
     console.log('ini user id dari token == ', req.userId);
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
     const result = await this.postService.findAll(page, limit);
+
+    //redis cache
+    this.redisClient
+      .run()
+      .client.setEx(
+        `post-${query.page}-${query.limit}`,
+        60,
+        JSON.stringify(result),
+      );
 
     return new ResponseDto({
       data: result,
@@ -70,6 +81,12 @@ export class PostController {
   async findOne(@Param('id') id: string) {
     const paramsId = parseInt(id);
     const result = await this.postService.findOne(paramsId);
+
+    //redis cache
+    this.redisClient
+      .run()
+      .client.setEx(`post-${paramsId}`, 60, JSON.stringify(result));
+
     return new ResponseDto({
       data: result,
     }).response();
