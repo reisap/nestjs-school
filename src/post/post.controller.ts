@@ -18,6 +18,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import ResponseDto from '@app/common/dto/response.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { typePusher } from '@app/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
@@ -25,6 +26,7 @@ export class PostController {
   constructor(
     private readonly postService: PostService,
     private readonly notificationService: NotificationService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   @Post()
@@ -38,6 +40,9 @@ export class PostController {
       event: typePusher.newPost,
       message: result,
     });
+
+    //send notif with event emitter
+    await this.eventEmitter.emit(typePusher.newPost, result);
 
     return new ResponseDto({
       data: result,

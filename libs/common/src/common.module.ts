@@ -5,6 +5,7 @@ import { LoggerModule } from './logger/logger.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DatabaseModule } from './database';
       }),
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot(),
   ],
   providers: [CommonService, JwtService],
   exports: [CommonService, JwtModule],
