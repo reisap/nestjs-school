@@ -180,7 +180,6 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
       throw new UnprocessableEntityException(e);
     }
   }
-
   public async saveMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
     try {
       const result = await this.entity.save(data);
