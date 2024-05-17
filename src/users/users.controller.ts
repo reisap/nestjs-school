@@ -50,11 +50,11 @@ export class UsersController {
     const result = await this.usersService.create(createUserDto);
 
     //send email into user
-    await this.notificationService.emailNotif({
-      type: typeEmail.verification,
-      email: result.email,
-      token: result.activationToken,
-    });
+    // await this.notificationService.emailNotif({
+    //   type: typeEmail.verification,
+    //   email: result.email,
+    //   token: result.activationToken,
+    // });
 
     return new ResponseDto({
       data: result,
