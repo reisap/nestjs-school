@@ -10,6 +10,7 @@ import {
   Query,
   Put,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -19,9 +20,11 @@ import ResponseDto from '@app/common/dto/response.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { typePusher } from '@app/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
+@UseInterceptors(CacheInterceptor)
 export class PostController {
   constructor(
     private readonly postService: PostService,

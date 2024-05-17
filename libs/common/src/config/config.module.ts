@@ -18,6 +18,7 @@ import {
         DB_HOST: Joi.string().required(),
         JWT_EXPIRATION: Joi.number().required(),
         JWT_SECRET: Joi.string().required(),
+        CACHE_TTL: Joi.number().required(),
       }),
     }),
   ],

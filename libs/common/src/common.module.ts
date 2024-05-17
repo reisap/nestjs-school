@@ -6,6 +6,10 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+// import { CacheModule } from '@nestjs/cache-manager';
+import { RedisService } from './database/redis.service';
+import type { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
@@ -13,7 +17,18 @@ import { CacheModule } from '@nestjs/cache-manager';
     ConfigModule,
     LoggerModule,
     DatabaseModule,
-    CacheModule.register(),
+    CacheModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        isGlobal: true,
+        ttl: configService.get<number>('CACHE_TTL'),
+      }),
+      inject: [ConfigService],
+    }),
+    // CacheModule.register<RedisClientOptions>({
+    //   store: redisStore, //need install with redis 3.X.X
+    //   host: 'redis-db',
+    //   port: 7379,
+    // }),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -25,7 +40,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     EventEmitterModule.forRoot(),
   ],
-  providers: [CommonService, JwtService],
-  exports: [CommonService, JwtModule],
+  providers: [CommonService, JwtService, RedisService],
+  exports: [CommonService, JwtModule, CacheModule],
 })
 export class CommonModule {}
