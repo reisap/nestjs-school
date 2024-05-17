@@ -25,6 +25,8 @@
 
 1.  Api version
 2.  email sender
-3.  realtime data with socket io
+3.  realtime data with socket io / pusher
 4.  jwt token auth
 5.  Docker
+6.  Redis Cache
+7.  Modular implementation
