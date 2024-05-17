@@ -16,15 +16,28 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import ResponseDto from '@app/common/dto/response.dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { typePusher } from '@app/common';
 
 @Controller('v1/post')
 @UseGuards(AuthGuard)
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   @Post()
   async create(@Body() createPostDto: CreatePostDto) {
     const result = await this.postService.create(createPostDto);
+
+    //send notif into user
+    await this.notificationService.pusherNotif({
+      type: typePusher.newPost,
+      channel: typePusher.newPost,
+      event: typePusher.newPost,
+      message: result,
+    });
 
     return new ResponseDto({
       data: result,

@@ -6,9 +6,14 @@ import { DatabaseModule } from '@app/common';
 import { CommonModule } from '@app/common/common.module';
 import { Post } from './entities/post.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
-  imports: [DatabaseModule.forFeature([Post]), CommonModule],
+  imports: [
+    DatabaseModule.forFeature([Post]),
+    CommonModule,
+    NotificationModule,
+  ],
   controllers: [PostController],
   providers: [PostRepository, PostService, AuthGuard],
   exports: [PostService],

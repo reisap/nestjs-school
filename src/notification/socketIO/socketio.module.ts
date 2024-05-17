@@ -5,5 +5,6 @@ import { SocketIOService } from './sockerio.service';
   imports: [],
   controllers: [],
   providers: [SocketIOService],
+  exports: [SocketIOService],
 })
 export class SocketIOModule {}

@@ -5,5 +5,6 @@ import { SmsService } from './sms.service';
   imports: [],
   controllers: [],
   providers: [SmsService],
+  exports: [SmsService],
 })
 export class SmsModule {}

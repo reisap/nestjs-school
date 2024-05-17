@@ -1,6 +1,6 @@
 export enum typeEmail {
   verification = 'sendVerification',
-  newPost = 'new Post',
+  newPost = 'new-post',
 }
 
 export interface ParamsEmail {
