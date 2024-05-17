@@ -1,24 +1,31 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { emailTemplateVerification } from './template/email.verification.template';
 import Config from '../../../libs/common/src/config/config.json';
-import { Logger } from 'nestjs-pino';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
+import { transporter } from './email.transporter';
 
+@Injectable()
 export class EmailService {
-  protected readonly logger: Logger;
-  constructor(private mailerService: MailerService) {}
-  async sendAccountActivation(
+  private readonly logger = new Logger(EmailService.name);
+  constructor() {}
+  public async sendAccountActivation(
     email: string,
     token: string,
     urlActivation = 'http://localhost:3000',
   ) {
-    urlActivation = urlActivation + '/api/v1/users/verify?token=' + token;
-    const html = emailTemplateVerification(urlActivation);
-    const info = await this.mailerService.sendMail({
-      from: `"Social Media Kekinian <${Config.mail.auth.user}>"`,
-      to: email,
-      subject: 'Account Activation',
-      html: html,
-    });
-    this.logger.log(info);
+    try {
+      urlActivation = urlActivation + '/api/v1/users/verify?token=' + token;
+      const html = emailTemplateVerification(urlActivation);
+
+      const info = await transporter.sendMail({
+        from: `'Social Media Kekinian <${Config.mail.auth.user}>'`,
+        to: email,
+        subject: 'Account Activation',
+        html: html,
+      });
+      this.logger.warn(info);
+      return info;
+    } catch (e) {
+      throw new BadGatewayException(e);
+    }
   }
 }

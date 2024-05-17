@@ -11,9 +11,14 @@ import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
 import { CreateUserPostMiddleware } from '@app/common';
 import { CommonModule } from '@app/common/common.module';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
-  imports: [DatabaseModule.forFeature([User]), CommonModule],
+  imports: [
+    DatabaseModule.forFeature([User]),
+    CommonModule,
+    NotificationModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersService],

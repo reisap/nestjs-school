@@ -18,16 +18,28 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import ResponseDto from '@app/common/dto/response.dto';
 import { Logger } from 'nestjs-pino';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { NotificationService } from 'src/notification/notification.service';
+import { typeEmail } from '@app/common';
 
 @Controller('v1/users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   protected readonly logger: Logger;
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const result = await this.usersService.create(createUserDto);
+
+    //send email into user
+    await this.notificationService.emailNotif({
+      type: typeEmail.verification,
+      email: result.email,
+      token: result.activationToken,
+    });
 
     return new ResponseDto({
       data: result,

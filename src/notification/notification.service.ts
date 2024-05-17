@@ -1,33 +1,40 @@
-import { Logger } from 'nestjs-pino';
-import { EmailService } from './email';
-import { SmsService } from './sms/sms.service';
-import { PusherService } from './pusher/pusher.service';
-import { SocketIOService } from './socketIO/sockerio.service';
+import { EmailService } from './email/email.service';
+// import { SmsService } from './sms/sms.service';
+// import { PusherService } from './pusher/pusher.service';
+// import { SocketIOService } from './socketIO/sockerio.service';
 import { ParamsEmail, typeEmail } from '@app/common';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 
+@Injectable()
 export class NotificationService {
-  protected readonly logger: Logger;
+  private readonly logger = new Logger(NotificationService.name);
   constructor(
-    private readonly emailService: EmailService,
-    private readonly smsService: SmsService,
-    private readonly pusherService: PusherService,
-    private readonly socketIOService: SocketIOService,
+    private emailService: EmailService,
+    // private smsService: SmsService,
+    // private pusherService: PusherService,
+    // private socketIOService: SocketIOService,
   ) {}
 
   async emailNotif(params: ParamsEmail) {
-    //send email ke user
-    switch (params.type) {
-      case typeEmail.verification:
-        await this.emailService.sendAccountActivation(
-          params.email,
-          params.token,
-        );
-        break;
-      default:
-        await this.emailService.sendAccountActivation(
-          params.email,
-          params.token,
-        );
+    try {
+      //send email ke user berdasarkan type nya
+      switch (params.type) {
+        case typeEmail.verification:
+          const info = await this.emailService.sendAccountActivation(
+            params.email,
+            params.token,
+          );
+          this.logger.log('send email =  ', info);
+
+          break;
+        default:
+          await this.emailService.sendAccountActivation(
+            params.email,
+            params.token,
+          );
+      }
+    } catch (e) {
+      throw new BadGatewayException(e);
     }
   }
   async smsNotif() {

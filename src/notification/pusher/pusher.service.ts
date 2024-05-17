@@ -1,7 +1,9 @@
 //https://dashboard.pusher.com/
+import { Injectable } from '@nestjs/common';
 import Config from '../../../libs/common/src/config/config.json';
 import Pusher from 'pusher';
 
+@Injectable()
 export class PusherService {
   appId: string;
   key: string;

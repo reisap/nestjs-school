@@ -1,6 +1,7 @@
 {
   "mail": {
     "host": "smtp.mailersend.net",
+    "secure": false,
     "port": 587,
     "auth": {
       "user": "MS_gNpaGK@trial-pxkjn41p2q04z781.mlsender.net",
