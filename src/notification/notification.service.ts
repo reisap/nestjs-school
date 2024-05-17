@@ -3,6 +3,7 @@ import { EmailService } from './email';
 import { SmsService } from './sms/sms.service';
 import { PusherService } from './pusher/pusher.service';
 import { SocketIOService } from './socketIO/sockerio.service';
+import { ParamsEmail, typeEmail } from '@app/common';
 
 export class NotificationService {
   protected readonly logger: Logger;
@@ -13,8 +14,21 @@ export class NotificationService {
     private readonly socketIOService: SocketIOService,
   ) {}
 
-  async emailNotif() {
+  async emailNotif(params: ParamsEmail) {
     //send email ke user
+    switch (params.type) {
+      case typeEmail.verification:
+        await this.emailService.sendAccountActivation(
+          params.email,
+          params.token,
+        );
+        break;
+      default:
+        await this.emailService.sendAccountActivation(
+          params.email,
+          params.token,
+        );
+    }
   }
   async smsNotif() {
     //send via sms ke user

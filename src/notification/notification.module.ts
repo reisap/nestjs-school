@@ -9,5 +9,6 @@ import { SocketIOModule } from './socketIO/socketio.module';
   imports: [EmailModule, SmsModule, PusherModule, SocketIOModule],
   controllers: [],
   providers: [NotificationService],
+  exports: [NotificationService],
 })
 export class NotificationModule {}
