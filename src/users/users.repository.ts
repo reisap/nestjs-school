@@ -14,7 +14,7 @@ export class UsersRepository
   extends AbstractRepository<User>
   implements UserRepositoryInterface
 {
-  protected readonly logger: Logger;
+  protected readonly logger = new Logger(UsersRepository.name);
   constructor(@InjectRepository(User) userRepository: Repository<User>) {
     super(userRepository);
   }

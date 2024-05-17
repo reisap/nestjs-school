@@ -13,20 +13,52 @@ import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import * as bcrypt from 'bcryptjs';
 import { randomString } from '@app/common';
 import { LoginUserDto } from './dto/login-user.dto';
+import { ChangePasswordUser } from './dto/change-password-user.dto';
 
 @Injectable()
 export class UsersService {
-  protected readonly logger: Logger;
+  private readonly logger = new Logger(UsersService.name);
   constructor(private readonly userRepository: UsersRepository) {}
+
+  async changeUserPassword(changeUserPassword: ChangePasswordUser) {
+    //1. check email ada di database atau tidak
+    //2. jika ada check password yang dulu dimasukan benar atau tidak
+    //3. update password dengan yang baru
+    try {
+      //1
+      const result = await this.userRepository.findOneParams({
+        email: changeUserPassword.email,
+      });
+
+      if (!result || result == undefined || result == null) {
+        throw new BadRequestException('email not found !!');
+      }
+
+      //2
+      const match = await bcrypt.compare(
+        changeUserPassword.password,
+        result.password,
+      );
+      if (!match) {
+        throw new BadRequestException('password not match !!');
+      }
+      //3
+      const user = await this.userRepository.update(result.id, {
+        password: changeUserPassword.new_password,
+      });
+
+      return user;
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
+  }
 
   async verifyUserByEmailToken(token: string) {
     try {
-      console.log('ini token === ', token);
-      //seacrh user by token generate
+      //search user by token generate
       const user = await this.userRepository.findOneParams({
         activationToken: token,
       });
-      console.log('user === ', user);
       if (!user || user == null || user == undefined) {
         throw new BadRequestException('token activation expired !');
       }
@@ -92,7 +124,10 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     try {
-      const result = await this.userRepository.update(id, updateUserDto);
+      const result = await this.userRepository.update(id, {
+        ...updateUserDto,
+        update_date: new Date().toISOString(),
+      });
       return result;
     } catch (e) {
       throw new BadRequestException(e);
