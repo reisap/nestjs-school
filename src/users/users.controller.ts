@@ -11,6 +11,7 @@ import {
   ClassSerializerInterceptor,
   UseGuards,
   Put,
+  BadGatewayException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -29,6 +30,20 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly notificationService: NotificationService,
   ) {}
+
+  @Get('/verify')
+  async verify(@Query() query) {
+    const token = query?.token || '';
+    if (token === '') {
+      throw new BadGatewayException(
+        'Sorry this is only for verification, you are not allowed in this page',
+      );
+    }
+    const result = await this.usersService.verifyUserByEmailToken(token);
+    return new ResponseDto({
+      data: result,
+    }).response();
+  }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {

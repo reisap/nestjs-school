@@ -19,6 +19,29 @@ export class UsersService {
   protected readonly logger: Logger;
   constructor(private readonly userRepository: UsersRepository) {}
 
+  async verifyUserByEmailToken(token: string) {
+    try {
+      console.log('ini token === ', token);
+      //seacrh user by token generate
+      const user = await this.userRepository.findOneParams({
+        activationToken: token,
+      });
+      console.log('user === ', user);
+      if (!user || user == null || user == undefined) {
+        throw new BadRequestException('token activation expired !');
+      }
+      //update status user active
+      const result = await this.userRepository.update(user.id, {
+        inactive: false,
+        activationToken: null,
+      });
+
+      return result;
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
+  }
+
   async login(loginUser: LoginUserDto) {
     const user = await this.userRepository.findOneParams({
       email: loginUser.email,

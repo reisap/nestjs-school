@@ -14,7 +14,7 @@ export class User extends AbstractModel {
   @Column()
   username: string;
 
-  @Column({ unique: false })
+  @Column({ unique: true })
   email: string;
 
   @Exclude()

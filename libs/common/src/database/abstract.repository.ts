@@ -27,7 +27,10 @@ export interface BaseInterfaceRepository<TEntity> {
   preload(entityLike: DeepPartial<TEntity>): Promise<TEntity>;
   findOne(options: FindOneOptions<TEntity>): Promise<TEntity>;
   delete(id: number): Promise<DeleteResult | any>;
-  update(id: any, data: object | DeepPartial<TEntity> | any): Promise<TEntity>;
+  update(
+    id: any,
+    data: object | DeepPartial<TEntity> | any,
+  ): Promise<TEntity | any>;
   findOneParams(object: object): Promise<TEntity>;
 }
 
@@ -151,15 +154,15 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   public async update(
     id: any,
     data: object | DeepPartial<TEntity> | any,
-  ): Promise<TEntity> {
+  ): Promise<TEntity | any> {
     try {
-      const tbl = await this.findOne(id);
+      const tbl = await this.findOneById(id);
       if (!tbl || typeof tbl === undefined || typeof tbl === null) {
         throw new NotFoundException('id not found');
       }
 
       await this.entity.update(id, data);
-      const result = await this.entity.save(data);
+      const result = await this.entity.create(data);
 
       return result;
     } catch (e) {
