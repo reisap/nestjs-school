@@ -2,6 +2,7 @@ import { Logger } from 'nestjs-pino';
 import { EmailService } from './email';
 import { SmsService } from './sms/sms.service';
 import { PusherService } from './pusher/pusher.service';
+import { SocketIOService } from './socketIO/sockerio.service';
 
 export class NotificationService {
   protected readonly logger: Logger;
@@ -9,6 +10,7 @@ export class NotificationService {
     private readonly emailService: EmailService,
     private readonly smsService: SmsService,
     private readonly pusherService: PusherService,
+    private readonly socketIOService: SocketIOService,
   ) {}
 
   async emailNotif() {
@@ -19,5 +21,8 @@ export class NotificationService {
   }
   async pusherNotif() {
     //digunakan untuk send notif ke web or mobile
+  }
+  async socketIONotif() {
+    //socket io notif realtime data
   }
 }
