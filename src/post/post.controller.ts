@@ -15,7 +15,7 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from '@app/common';
 import ResponseDto from '@app/common/dto/response.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { typePusher } from '@app/common';
@@ -24,7 +24,7 @@ import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import RedisClient from '@app/common/database/redis';
 
 @Controller('v1/post')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard)
 @UseInterceptors(CacheInterceptor)
 export class PostController {
   constructor(

@@ -17,8 +17,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import ResponseDto from '@app/common/dto/response.dto';
-import { AuthGuard } from '@auth/auth.guard';
-import { NotificationService } from 'src/notification/notification.service';
+import { JwtAuthGuard } from '@app/common';
+import { NotificationService } from '../notification/notification.service';
 import { typeEmail } from '@app/common';
 import { ChangePasswordUser } from './dto/change-password-user.dto';
 
@@ -62,7 +62,7 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findAll(@Query() query) {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
@@ -73,21 +73,21 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string) {
     const result = await this.usersService.findOne(parseInt(id));
     return new ResponseDto({ data: result }).response();
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const result = await this.usersService.update(parseInt(id), updateUserDto);
     return new ResponseDto({ data: result }).response();
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: string) {
     const result = await this.usersService.remove(parseInt(id));
     return new ResponseDto({ data: result }).response();

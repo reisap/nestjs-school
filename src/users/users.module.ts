@@ -12,7 +12,6 @@ import { UsersRepository } from './users.repository';
 import { CreateUserPostMiddleware } from '@app/common';
 import { CommonModule } from '@app/common/common.module';
 import { NotificationModule } from 'src/notification/notification.module';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [
@@ -21,7 +20,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
     NotificationModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, AuthGuard],
+  providers: [UsersService, UsersRepository],
   exports: [UsersService],
 })
 export class UsersModule implements NestModule {

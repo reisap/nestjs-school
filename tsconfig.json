@@ -21,9 +21,7 @@
     "esModuleInterop": true,
     "paths": {
       "@app/common": ["libs/common/src"],
-      "@app/common/*": ["libs/common/src/*"],
-      "@auth": ["src/auth"],
-      "@auth/*": ["src/auth/*"]
+      "@app/common/*": ["libs/common/src/*"]
     }
   }
 }

@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { NotificationService } from 'src/notification/notification.service';
+import { NotificationService } from '../notification/notification.service';
+import { JwtAuthGuard } from '@app/common';
+import { JwtService } from '@nestjs/jwt';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -29,7 +31,10 @@ describe('UsersController', () => {
         { provide: UsersService, useValue: mockUsersService },
         { provide: NotificationService, useValue: mockNotificationService },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useClass(JwtService)
+      .compile();
 
     controller = module.get<UsersController>(UsersController);
     service = module.get<UsersService>(UsersService);
