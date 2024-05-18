@@ -25,51 +25,40 @@ import { ChangePasswordUser } from './dto/change-password-user.dto';
 @Controller('v1/users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
-  protected readonly logger = new Logger(UsersController.name);
+  private readonly logger = new Logger(UsersController.name);
+
   constructor(
     private readonly usersService: UsersService,
     private readonly notificationService: NotificationService,
   ) {}
 
-  //change password
   @Post('/change-password')
   async setNewPasswordUser(@Body() changeUserPassword: ChangePasswordUser) {
     const result =
       await this.usersService.changeUserPassword(changeUserPassword);
-    return new ResponseDto({
-      data: result,
-    }).response();
+    return new ResponseDto({ data: result }).response();
   }
 
-  //verify email user (new user)
   @Get('/verify')
-  async verify(@Query() query) {
-    const token = query?.token || '';
-    if (token === '') {
+  async verify(@Query('token') token: string) {
+    if (!token) {
       throw new BadGatewayException(
-        'Sorry this is only for verification, you are not allowed in this page',
+        'This page is only for verification, you are not allowed here',
       );
     }
     const result = await this.usersService.verifyUserByEmailToken(token);
-    return new ResponseDto({
-      data: result,
-    }).response();
+    return new ResponseDto({ data: result }).response();
   }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const result = await this.usersService.create(createUserDto);
-
-    //send email into user
     await this.notificationService.emailNotif({
       type: typeEmail.verification,
       email: result.email,
       token: result.activationToken,
     });
-
-    return new ResponseDto({
-      data: result,
-    }).response();
+    return new ResponseDto({ data: result }).response();
   }
 
   @Get()
@@ -77,40 +66,30 @@ export class UsersController {
   async findAll(@Query() query) {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
-    const result = await this.usersService.findAll(page, limit);
-
-    return new ResponseDto({
-      data: result,
-    }).response();
+    const orderBy = query.order || 'id';
+    const sort = query.sort || 'asc';
+    const result = await this.usersService.findAll(page, limit, orderBy, sort);
+    return new ResponseDto({ data: result }).response();
   }
 
   @Get(':id')
   @UseGuards(AuthGuard)
   async findOne(@Param('id') id: string) {
-    const paramsId = parseInt(id);
-    const result = await this.usersService.findOne(paramsId);
-    return new ResponseDto({
-      data: result,
-    }).response();
+    const result = await this.usersService.findOne(parseInt(id));
+    return new ResponseDto({ data: result }).response();
   }
 
   @Put(':id')
   @UseGuards(AuthGuard)
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const paramsId = parseInt(id);
-    const result = await this.usersService.update(paramsId, updateUserDto);
-    return new ResponseDto({
-      data: result,
-    }).response();
+    const result = await this.usersService.update(parseInt(id), updateUserDto);
+    return new ResponseDto({ data: result }).response();
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
   async remove(@Param('id') id: string) {
-    const paramsId = parseInt(id);
-    const result = await this.usersService.remove(paramsId);
-    return new ResponseDto({
-      data: result,
-    }).response();
+    const result = await this.usersService.remove(parseInt(id));
+    return new ResponseDto({ data: result }).response();
   }
 }

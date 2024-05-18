@@ -98,9 +98,18 @@ export class UsersService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<User[]> {
+  async findAll(
+    page: number,
+    limit: number,
+    orderBy?: any,
+    sort?: any,
+  ): Promise<User[]> {
     try {
-      return await this.userRepository.findAll({ skip: page, take: limit });
+      return await this.userRepository.findAll(
+        { skip: page, take: limit },
+        orderBy,
+        sort,
+      );
     } catch (e) {
       this.logger.error('Error finding all users', e);
       throw new BadRequestException(e.message);

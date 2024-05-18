@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Logger,
   NotFoundException,
   UnprocessableEntityException,
@@ -10,6 +9,7 @@ import {
   DeleteResult,
   FindManyOptions,
   FindOneOptions,
+  FindOptionsOrder,
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
@@ -21,16 +21,17 @@ export interface BaseInterfaceRepository<TEntity> {
   saveMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]>;
   findOneById(id: any): Promise<TEntity>;
   findByCondition(filterCondition: FindOneOptions<TEntity>): Promise<TEntity>;
-  findAll(options?: FindManyOptions<TEntity>): Promise<TEntity[]>;
+  findAll(
+    options?: FindManyOptions<TEntity>,
+    sortField?: keyof TEntity,
+    order?: 'ASC' | 'DESC',
+  ): Promise<TEntity[]>;
   remove(data: TEntity): Promise<TEntity>;
   findWithRelations(relations: FindManyOptions<TEntity>): Promise<TEntity[]>;
   preload(entityLike: DeepPartial<TEntity>): Promise<TEntity>;
   findOne(options: FindOneOptions<TEntity>): Promise<TEntity>;
-  delete(id: number): Promise<DeleteResult | any>;
-  update(
-    id: any,
-    data: object | DeepPartial<TEntity> | any,
-  ): Promise<TEntity | any>;
+  delete(id: number): Promise<DeleteResult>;
+  update(id: any, data: DeepPartial<TEntity>): Promise<TEntity>;
   findOneParams(object: object): Promise<TEntity>;
 }
 
@@ -38,73 +39,98 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
   implements BaseInterfaceRepository<TEntity>
 {
   protected abstract readonly logger: Logger;
+
   constructor(protected readonly entity: Repository<TEntity>) {}
 
   public async preload(entityLike: DeepPartial<TEntity>): Promise<TEntity> {
-    return await this.entity.preload(entityLike);
+    try {
+      return await this.entity.preload(entityLike);
+    } catch (e) {
+      this.handleException('preload', e);
+    }
   }
 
-  //create
   public async create(data: DeepPartial<TEntity>): Promise<TEntity> {
     try {
-      return await this.entity.create(data);
+      return this.entity.create(data);
     } catch (e) {
-      throw new UnprocessableEntityException(e);
+      this.handleException('create', e);
     }
   }
+
   public async createMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
     try {
-      return await this.entity.create(data);
+      return this.entity.create(data);
     } catch (e) {
-      throw new UnprocessableEntityException(e);
+      this.handleException('createMany', e);
     }
   }
-  //end create
 
-  //find
-  async findAll(options?: FindManyOptions<TEntity>): Promise<TEntity[]> {
-    /**
-     * Offset (paginated) where from entities should be taken.
-     */
-    //skip?: number;
-    /**
-     * Limit (paginated) - max number of entities should be taken.
-     */
-    //take?: number;
-
+  public async save(data: DeepPartial<TEntity>): Promise<TEntity> {
     try {
-      return await this.entity.find(options);
+      return await this.entity.save(data);
     } catch (e) {
-      throw new BadRequestException(e);
+      this.handleException('save', e);
     }
   }
+
+  public async saveMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
+    try {
+      return await this.entity.save(data);
+    } catch (e) {
+      this.handleException('saveMany', e);
+    }
+  }
+
+  public async findAll(
+    options?: FindManyOptions<TEntity>,
+    sortField: keyof TEntity = 'id',
+    order: 'ASC' | 'DESC' = 'ASC',
+  ): Promise<TEntity[]> {
+    try {
+      // Create a type-safe order object
+      const orderOption: FindOptionsOrder<TEntity> = {
+        [sortField]: order,
+      } as FindOptionsOrder<TEntity>;
+
+      const findOptions: FindManyOptions<TEntity> = {
+        ...options,
+        order: orderOption,
+      };
+
+      return await this.entity.find(findOptions);
+    } catch (e) {
+      this.handleException('findAll', e);
+    }
+  }
+
   public async findOneById(id: any): Promise<TEntity> {
     try {
-      const options: FindOptionsWhere<TEntity> = {
-        id: id,
-      };
-      const result = await this.entity.findOneBy(options);
-      if (!result || typeof result === undefined || typeof result === null) {
-        throw new NotFoundException('id not found');
+      const result = await this.entity.findOneBy({
+        id,
+      } as FindOptionsWhere<TEntity>);
+      if (!result) {
+        throw new NotFoundException('ID not found');
       }
-
       return result;
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('findOneById', e);
     }
   }
+
   public async findOne(options: FindOneOptions<TEntity>): Promise<TEntity> {
     try {
-      return this.entity.findOne(options);
+      return await this.entity.findOne(options);
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('findOne', e);
     }
   }
-  async findOneParams(object: object): Promise<TEntity> {
+
+  public async findOneParams(object: object): Promise<TEntity> {
     try {
       return await this.entity.findOne({ where: object });
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('findOneParams', e);
     }
   }
 
@@ -114,79 +140,61 @@ export abstract class AbstractRepository<TEntity extends AbstractModel>
     try {
       return await this.entity.findOne(filterCondition);
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('findByCondition', e);
     }
   }
+
   public async findWithRelations(
     relations: FindManyOptions<TEntity>,
   ): Promise<TEntity[]> {
     try {
       return await this.entity.find(relations);
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('findWithRelations', e);
     }
   }
-  //end find
 
-  //delete
   public async remove(data: TEntity): Promise<TEntity> {
     try {
       return await this.entity.remove(data);
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('remove', e);
     }
   }
-  public async delete(id: number): Promise<DeleteResult | any> {
+
+  public async delete(id: number): Promise<DeleteResult> {
     try {
       const result = await this.entity.delete(id);
-      if (result.affected == 0) {
-        throw new NotFoundException('id not found');
+      if (result.affected === 0) {
+        throw new NotFoundException('ID not found');
       }
-
       return result;
     } catch (e) {
-      throw new NotFoundException(e);
+      this.handleException('delete', e);
     }
   }
-  //end delete
 
-  //update
   public async update(
     id: any,
-    data: object | DeepPartial<TEntity> | any,
+    data: DeepPartial<TEntity> | any,
   ): Promise<TEntity | any> {
     try {
-      const tbl = await this.findOneById(id);
-      if (!tbl || typeof tbl === undefined || typeof tbl === null) {
-        throw new NotFoundException('id not found');
+      const entity = await this.findOneById(id);
+      if (!entity) {
+        throw new NotFoundException('ID not found');
       }
-
       await this.entity.update(id, data);
-      const result = await this.entity.create(data);
+      return this.entity.create(data);
+    } catch (e) {
+      this.handleException('update', e);
+    }
+  }
 
-      return result;
-    } catch (e) {
-      throw new UnprocessableEntityException(e);
+  private handleException(method: string, error: any): never {
+    this.logger.error(`Error in ${method}`, error);
+    if (error instanceof NotFoundException) {
+      throw new NotFoundException(error.message);
     }
+    throw new UnprocessableEntityException(error.message);
   }
-  public async save(data: DeepPartial<TEntity>): Promise<TEntity> {
-    try {
-      console.log('ini hasil save === ', data);
-      const result = await this.entity.save(data);
-
-      return result;
-    } catch (e) {
-      console.log('masuk error save == ', e);
-      throw new UnprocessableEntityException(e);
-    }
-  }
-  public async saveMany(data: DeepPartial<TEntity>[]): Promise<TEntity[]> {
-    try {
-      const result = await this.entity.save(data);
-      return result;
-    } catch (e) {
-      throw new UnprocessableEntityException(e);
-    }
-  }
-  //end update
 }
