@@ -46,6 +46,9 @@ export class PostController {
       message: result,
     });
 
+    //send notif with socketIO
+    await this.notificationService.socketIONotif(result);
+
     //send notif with event emitter
     await this.eventEmitter.emit(typePusher.newPost, result);
 

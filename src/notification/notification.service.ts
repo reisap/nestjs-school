@@ -1,9 +1,11 @@
 import { EmailService } from './email/email.service';
 import { SmsService } from './sms/sms.service';
 import { PusherService } from './pusher/pusher.service';
-import { SocketIOService } from './socketIO/sockerio.service';
+import { SocketIOService } from './socketIO/socketio.service';
 import { ParamsEmail, ParamsPusher, typeEmail, typePusher } from '@app/common';
 import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
+import { SocketIOGateway } from './socketIO/socketio.gateway';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class NotificationService {
@@ -12,7 +14,7 @@ export class NotificationService {
     private emailService: EmailService,
     private smsService: SmsService,
     private pusherService: PusherService,
-    private socketIOService: SocketIOService,
+    private SocketIOGateway: SocketIOGateway,
   ) {}
 
   async emailNotif(params: ParamsEmail) {
@@ -64,7 +66,13 @@ export class NotificationService {
       throw new BadGatewayException(e);
     }
   }
-  async socketIONotif() {
+  async socketIONotif(body: any) {
     //socket io notif realtime data
+    try {
+      //only for post now, send notification from server into client one directional
+      await this.SocketIOGateway.sendNotifPost(body);
+    } catch (e) {
+      throw new BadGatewayException(e);
+    }
   }
 }
