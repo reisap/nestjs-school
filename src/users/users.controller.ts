@@ -17,7 +17,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import ResponseDto from '@app/common/dto/response.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '@auth/auth.guard';
 import { NotificationService } from 'src/notification/notification.service';
 import { typeEmail } from '@app/common';
 import { ChangePasswordUser } from './dto/change-password-user.dto';
